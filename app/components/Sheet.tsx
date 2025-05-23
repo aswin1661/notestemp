@@ -29,7 +29,7 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
 
         setData(rows); // Store all rows
         setFilteredData(rows); // Initially, display all rows
-      } catch (err) {
+      } catch (error) {
         setError('Failed to fetch data');
       } finally {
         setLoading(false);
