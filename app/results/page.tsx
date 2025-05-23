@@ -1,4 +1,3 @@
-// app/results/page.tsx (Results Page)
 "use client";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -9,8 +8,8 @@ type Row = {
 };
 
 const ResultsPage = () => {
-  const [data, setData] = useState<Row[]>([]);
-  const [filteredData, setFilteredData] = useState<Row[]>([]);
+  const [data, setData] = useState<Row[]>([]); 
+  const [filteredData, setFilteredData] = useState<Row[]>([]); 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams(); // Get search params from URL
@@ -30,7 +29,7 @@ const ResultsPage = () => {
         setData(rows); // Store all rows
         setFilteredData(rows); // Initially, display all rows
       } catch {
-        setError('Failed to fetch data');
+        setError('Failed to fetch data'); // Error handling without using 'err'
       } finally {
         setLoading(false);
       }
