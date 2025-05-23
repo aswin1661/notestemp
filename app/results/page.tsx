@@ -7,19 +7,20 @@ type Row = {
 };
 
 const ResultsPage = () => {
-  const [data, setData] = useState<Row[]>([]); 
-  const [filteredData, setFilteredData] = useState<Row[]>([]); 
+  const [data, setData] = useState<Row[]>([]);
+  const [filteredData, setFilteredData] = useState<Row[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');  // State to store the search query
+  const [searchQuery, setSearchQuery] = useState<string>(''); // State to store the search query
 
-  // This effect ensures `useSearchParams` runs only on the client
+  // This effect ensures the search query is read from the URL only on the client
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const query = searchParams.get('query') ?? '';
     setSearchQuery(query);
-  }, []);  // This runs only on the client after the component mounts
+  }, []);
 
+  // Fetch the Google Sheet data on component mount
   useEffect(() => {
     const sheetId = '1R9hJjxUYZCNgntXunSAhzxKLlBgUCL6RBZLc1gPt5Ks';
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
@@ -32,17 +33,18 @@ const ResultsPage = () => {
         const rows = jsonData.table.rows;
 
         setData(rows); // Store all rows
-        setFilteredData(rows); // Initially, display all rows
+        setFilteredData(rows); // Initially show all rows
       } catch {
-        setError('Failed to fetch data'); // Error handling
+        setError('Failed to fetch data');
       } finally {
         setLoading(false);
       }
     };
 
     fetchSheetData();
-  }, []); // Fetch data on component mount
+  }, []);
 
+  // Filtering logic
   useEffect(() => {
     if (searchQuery) {
       const keywords = searchQuery
@@ -50,29 +52,43 @@ const ResultsPage = () => {
         .map((keyword) => keyword.trim().toLowerCase())
         .filter((keyword) => keyword.length > 0);
 
-      // Filter rows using the keywords (OR condition)
-      const filtered = data.filter((row: Row) => {
-        return keywords.some((keyword) =>
+      const validKeywords = keywords.filter((keyword) =>
+        data.some((row: Row) =>
           row.c.some((cell) => {
             if (cell?.v) {
-              const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
-              return cellValue.includes(keyword); // Case-insensitive check
+              const cellValue =
+                typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
+              return cellValue.includes(keyword);
+            }
+            return false;
+          })
+        )
+      );
+
+      // If no keywords match any data, show no rows
+      if (validKeywords.length === 0) {
+        setFilteredData([]);
+        return;
+      }
+
+      const filtered = data.filter((row: Row) => {
+        return validKeywords.every((keyword) =>
+          row.c.some((cell) => {
+            if (cell?.v) {
+              const cellValue =
+                typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
+              return cellValue.includes(keyword);
             }
             return false;
           })
         );
       });
 
-      // If no valid matches, show "No resource found."
-      if (filtered.length === 0) {
-        setFilteredData([]); // No data matching query
-      } else {
-        setFilteredData(filtered); // Set filtered rows based on keywords
-      }
+      setFilteredData(filtered);
     } else {
       setFilteredData([]); // If no search query, show no rows
     }
-  }, [searchQuery, data]); // Re-run filtering when searchQuery or data changes
+  }, [searchQuery, data]);
 
   if (loading) return <div className='h-[100vh] w-full flex items-center justify-center flex-col'>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -80,12 +96,15 @@ const ResultsPage = () => {
   return (
     <div className='min-h-screen h-auto w-full flex items-center justify-center flex-col'>
       <h2 className='font-bold'>Available downloads</h2>
-      
+
       {filteredData.length > 0 ? (
         filteredData.map((row: Row, index: number) => {
           const [col1, col2, col3, col4, col5] = row.c;
           return (
-            <div className='flex h-[4rem] w-auto p-[2vw] rounded-3xl flex items-center justify-evenly flex-row m-[3vh] bg-white text-black' key={index}>
+            <div
+              className='flex h-[4rem] w-auto p-[2vw] rounded-3xl flex items-center justify-evenly flex-row m-[3vh] bg-white text-black'
+              key={index}
+            >
               <p>dept: {col1?.v ?? 'N/A'} .</p>
               <p>semester: {col2?.v ?? 'N/A'} . </p>
               <p>subject: {col3?.v ?? 'N/A'} . </p>
