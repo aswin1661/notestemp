@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 // Define the type for rows of data from the Google Sheets
 type Row = {
@@ -12,8 +11,14 @@ const ResultsPage = () => {
   const [filteredData, setFilteredData] = useState<Row[]>([]); 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams(); // Get search params from URL
-  const searchQuery = searchParams?.get('query') ?? ''; // Get the search query
+  const [searchQuery, setSearchQuery] = useState<string>('');  // State to store the search query
+
+  // This effect ensures `useSearchParams` runs only on the client
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const query = searchParams.get('query') ?? '';
+    setSearchQuery(query);
+  }, []);  // This runs only on the client after the component mounts
 
   useEffect(() => {
     const sheetId = '1R9hJjxUYZCNgntXunSAhzxKLlBgUCL6RBZLc1gPt5Ks';
@@ -29,7 +34,7 @@ const ResultsPage = () => {
         setData(rows); // Store all rows
         setFilteredData(rows); // Initially, display all rows
       } catch {
-        setError('Failed to fetch data'); // Error handling without using 'err'
+        setError('Failed to fetch data'); // Error handling
       } finally {
         setLoading(false);
       }
@@ -40,13 +45,11 @@ const ResultsPage = () => {
 
   useEffect(() => {
     if (searchQuery) {
-      // Normalize the search query by trimming and splitting into keywords (space or comma separated)
       const keywords = searchQuery
-        .split(/[ ,]+/) // Split by space or comma
-        .map((keyword) => keyword.trim().toLowerCase()) // Normalize each keyword
-        .filter((keyword) => keyword.length > 0); // Remove empty keywords
+        .split(/[ ,]+/)
+        .map((keyword) => keyword.trim().toLowerCase())
+        .filter((keyword) => keyword.length > 0);
 
-      // Check for which keywords exist in the database
       const validKeywords = keywords.filter((keyword) =>
         data.some((row: Row) =>
           row.c.some((cell) => {
@@ -59,7 +62,6 @@ const ResultsPage = () => {
         )
       );
 
-      // Filter rows using the valid keywords (OR condition)
       const filtered = data.filter((row: Row) => {
         return validKeywords.every((keyword) =>
           row.c.some((cell) => {
@@ -89,13 +91,13 @@ const ResultsPage = () => {
         filteredData.map((row: Row, index: number) => {
           const [col1, col2, col3, col4, col5] = row.c;
           return (
-            <div className='flex h-[4rem] w-auto p-[2vw] rounded-3xl flex items-center justify-evenly flex-row m-[3vh] bg-white text-black'  key={index}>
-              <p>dept: {col1?.v ?? 'N/A'}        .</p>
-              <p>semester: {col2?.v ?? 'N/A'}   . </p>
-              <p>subject: {col3?.v ?? 'N/A'}     . </p>
-              <p>the resource found               </p>
-              <p>link: {col4?.v ?? 'N/A'}         .</p>
-              <p>title: {col5?.v ?? 'N/A'}        .</p>
+            <div className='flex h-[4rem] w-auto p-[2vw] rounded-3xl flex items-center justify-evenly flex-row m-[3vh] bg-white text-black' key={index}>
+              <p>dept: {col1?.v ?? 'N/A'} .</p>
+              <p>semester: {col2?.v ?? 'N/A'} . </p>
+              <p>subject: {col3?.v ?? 'N/A'} . </p>
+              <p>the resource found </p>
+              <p>link: {col4?.v ?? 'N/A'} .</p>
+              <p>title: {col5?.v ?? 'N/A'} .</p>
             </div>
           );
         })
