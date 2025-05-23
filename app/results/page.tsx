@@ -50,20 +50,9 @@ const ResultsPage = () => {
         .map((keyword) => keyword.trim().toLowerCase())
         .filter((keyword) => keyword.length > 0);
 
-      const validKeywords = keywords.filter((keyword) =>
-        data.some((row: Row) =>
-          row.c.some((cell) => {
-            if (cell?.v) {
-              const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
-              return cellValue.includes(keyword); // Check if keyword exists in any column
-            }
-            return false;
-          })
-        )
-      );
-
+      // Filter rows using the keywords (OR condition)
       const filtered = data.filter((row: Row) => {
-        return validKeywords.every((keyword) =>
+        return keywords.some((keyword) =>
           row.c.some((cell) => {
             if (cell?.v) {
               const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
@@ -74,7 +63,12 @@ const ResultsPage = () => {
         );
       });
 
-      setFilteredData(filtered); // Set filtered rows based on valid keywords
+      // If no valid matches, show "No resource found."
+      if (filtered.length === 0) {
+        setFilteredData([]); // No data matching query
+      } else {
+        setFilteredData(filtered); // Set filtered rows based on keywords
+      }
     } else {
       setFilteredData([]); // If no search query, show no rows
     }
@@ -84,7 +78,7 @@ const ResultsPage = () => {
   if (error) return <div>{error}</div>;
 
   return (
-     <div className='min-h-screen h-auto  w-full flex items-center justify-center flex-col'>
+    <div className='min-h-screen h-auto w-full flex items-center justify-center flex-col'>
       <h2 className='font-bold'>Available downloads</h2>
       
       {filteredData.length > 0 ? (
