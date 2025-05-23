@@ -29,7 +29,7 @@ const ResultsPage = () => {
 
         setData(rows); // Store all rows
         setFilteredData(rows); // Initially, display all rows
-      } catch (err) {
+      } catch {
         setError('Failed to fetch data');
       } finally {
         setLoading(false);
