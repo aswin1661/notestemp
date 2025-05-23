@@ -1,4 +1,3 @@
-"use client"
 import { useEffect, useState } from 'react';
 
 // Define the type for rows of data from the Google Sheets
@@ -14,7 +13,6 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
   const [data, setData] = useState<Row[]>([]);
   const [filteredData, setFilteredData] = useState<Row[]>([]); // State for filtered data
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const sheetId = '1R9hJjxUYZCNgntXunSAhzxKLlBgUCL6RBZLc1gPt5Ks';
@@ -30,7 +28,7 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
         setData(rows); // Store all rows
         setFilteredData(rows); // Initially, display all rows
       } catch (error) {
-        setError('Failed to fetch data');
+        console.error('Failed to fetch data', error);
       } finally {
         setLoading(false);
       }
@@ -61,31 +59,28 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
   }, [keywords, data]); // Re-run the effect when keywords or data change
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
       <h2 className='font-bold'>Available downloads</h2>
       
-          {filteredData.length > 0 ? (
-            filteredData.map((row: Row, index: number) => {
-              const [col1, col2, col3,col4 ,col5] = row.c;
-              return (
-                <div key={index}>
-                    <p>dept: {col1?.v ?? 'N/A'}</p>
-                    <p>semester: {col2?.v ?? 'N/A'}</p>
-                    <p>subject: {col3?.v ?? 'N/A'}</p>
-                    <p>the resource found</p>
-                    <p>link: {col4?.v ?? 'N/A'}</p>
-                    <p>title: {col5?.v ?? 'N/A'}</p>
-                </div>
-              );
-            })
-          ) : (
-           
-              <p>No resource found.</p>
-            
-          )}
+      {filteredData.length > 0 ? (
+        filteredData.map((row: Row, index: number) => {
+          const [col1, col2, col3, col4, col5] = row.c;
+          return (
+            <div key={index}>
+              <p>dept: {col1?.v ?? 'N/A'}</p>
+              <p>semester: {col2?.v ?? 'N/A'}</p>
+              <p>subject: {col3?.v ?? 'N/A'}</p>
+              <p>the resource found</p>
+              <p>link: {col4?.v ?? 'N/A'}</p>
+              <p>title: {col5?.v ?? 'N/A'}</p>
+            </div>
+          );
+        })
+      ) : (
+        <p>No resource found.</p>
+      )}
     </div>
   );
 };
