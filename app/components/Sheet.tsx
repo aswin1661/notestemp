@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from 'react';
 
 // Define the type for rows of data from the Google Sheets
