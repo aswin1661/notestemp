@@ -1,19 +1,24 @@
-"use client"
+"use client";
 import { useEffect, useState } from 'react';
 
-// Define the type for rows of data from the Google Sheets
 type Row = {
   c: Array<{ v: string | number | null } | undefined>;
 };
 
 type GoogleSheetDataProps = {
-  keywords: string[]; // Expecting keywords as an array of strings
+  keywords: string[];
 };
 
 const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
   const [data, setData] = useState<Row[]>([]);
-  const [filteredData, setFilteredData] = useState<Row[]>([]); // State for filtered data
+  const [filteredData, setFilteredData] = useState<Row[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowLoader(true), 300); // delay loader appearance
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const sheetId = '1R9hJjxUYZCNgntXunSAhzxKLlBgUCL6RBZLc1gPt5Ks';
@@ -26,8 +31,7 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
         const jsonData = JSON.parse(text.substring(47).slice(0, -2));
         const rows = jsonData.table.rows;
 
-        setData(rows); // Store all rows
-        setFilteredData(rows); // Initially, display all rows
+        setData(rows);
       } catch (error) {
         console.error('Failed to fetch data', error);
       } finally {
@@ -36,54 +40,57 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
     };
 
     fetchSheetData();
-  }, []); // Fetch data on component mount
+  }, []);
 
   useEffect(() => {
-    // Ensure there are exactly three keywords provided
     if (keywords.length === 3) {
-      const filtered = data.filter((row: Row) => {
-        return keywords.every((keyword) =>
+      const filtered = data.filter((row: Row) =>
+        keywords.every((keyword) =>
           row.c.some((cell) => {
             if (cell?.v) {
-              // Handle string or number separately
               const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
-              return cellValue.includes(keyword.toLowerCase()); // Case-insensitive check
+              return cellValue.includes(keyword.toLowerCase());
             }
             return false;
           })
-        );
-      });
-      setFilteredData(filtered); // Set filtered rows
+        )
+      );
+      setFilteredData(filtered);
     } else {
-      setFilteredData([]); // If fewer than three keywords, show no rows
+      setFilteredData([]); // Require exactly 3 keywords
     }
-  }, [keywords, data]); // Re-run the effect when keywords or data change
+  }, [keywords, data]);
 
-  if (loading) return <div className='h-[90vh] w-full flex items-center justify-center flex-col' >Loading...</div>;
+  if (loading && showLoader) {
+    return <div className='h-[90vh] w-full flex items-center justify-center flex-col'>Loading...</div>;
+  }
 
-  return (
-    <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
-      <h2 className='font-bold'>Available downloads</h2>
-      
-      {filteredData.length > 0 ? (
-        filteredData.map((row: Row, index: number) => {
-          const [col1, col2, col3, col4, col5] = row.c;
-          return (
-            <div key={index}>
-              <p>dept: {col1?.v ?? 'N/A'}</p>
-              <p>semester: {col2?.v ?? 'N/A'}</p>
-              <p>subject: {col3?.v ?? 'N/A'}</p>
-              <p>the resource found</p>
-              <p>link: {col4?.v ?? 'N/A'}</p>
-              <p>title: {col5?.v ?? 'N/A'}</p>
-            </div>
-          );
-        })
-      ) : (
-        <p>No resource found.</p>
-      )}
-    </div>
-  );
+ return (
+  <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
+    <h2 className='font-bold'>Available downloads</h2>
+
+    {loading && showLoader ? (
+      <div>Loading...</div>
+    ) : filteredData.length > 0 ? (
+      filteredData.map((row: Row, index: number) => {
+        const [col1, col2, col3, col4, col5] = row.c;
+        return (
+          <div key={index} className='p-4 m-2 bg-white text-black rounded shadow'>
+            <p>dept: {col1?.v ?? 'N/A'}</p>
+            <p>semester: {col2?.v ?? 'N/A'}</p>
+            <p>subject: {col3?.v ?? 'N/A'}</p>
+            <p>the resource found</p>
+            <p>link: {col4?.v ?? 'N/A'}</p>
+            <p>title: {col5?.v ?? 'N/A'}</p>
+          </div>
+        );
+      })
+    ) : (
+      <p>No resource found.</p>
+    )}
+  </div>
+);
+;
 };
 
 export default GoogleSheetData;
