@@ -59,7 +59,7 @@ const GoogleSheetData = ({ keywords }: GoogleSheetDataProps) => {
     }
   }, [keywords, data]); // Re-run the effect when keywords or data change
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className='h-[90vh] w-full flex items-center justify-center flex-col' >Loading...</div>;
 
   return (
     <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
