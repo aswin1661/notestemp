@@ -22,7 +22,7 @@ const ResultsPage = () => {
 
   // Delay showing the loader to prevent flash
   useEffect(() => {
-    const timer = setTimeout(() => setShowLoader(true), 300); // Show loader only after 300ms
+    const timer = setTimeout(() => setShowLoader(true), 300);
     return () => clearTimeout(timer);
   }, []);
 
@@ -47,7 +47,7 @@ const ResultsPage = () => {
     fetchSheetData();
   }, []);
 
-  // Filter based on search query
+  // Enhanced filtering logic
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredData([]);
@@ -59,19 +59,41 @@ const ResultsPage = () => {
       .map((keyword) => keyword.trim().toLowerCase())
       .filter((keyword) => keyword.length > 0);
 
-    const filtered = data.filter((row: Row) =>
-      keywords.every((keyword) =>
+    if (keywords.length === 1) {
+      const filtered = data.filter((row: Row) =>
         row.c.some((cell) => {
           if (cell?.v) {
             const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
-            return cellValue.includes(keyword);
+            return cellValue.includes(keywords[0]);
           }
           return false;
         })
-      )
-    );
+      );
+      setFilteredData(filtered);
+    } else {
+      // Logic for matching all provided keywords in combination
+      const matchedRows = data
+        .map((row) => {
+          let matchCount = 0;
+          // Check each keyword in each row
+          for (const keyword of keywords) {
+            const matched = row.c.some((cell) => {
+              if (cell?.v) {
+                const cellValue = typeof cell.v === 'string' ? cell.v.toLowerCase() : String(cell.v).toLowerCase();
+                return cellValue.includes(keyword);
+              }
+              return false;
+            });
+            if (matched) matchCount++;
+          }
+          // Include the row only if it matches all provided keywords
+          return { row, matchCount };
+        })
+        .filter(({ matchCount }) => matchCount === keywords.length) // All keywords must match
+        .map(({ row }) => row);
 
-    setFilteredData(filtered);
+      setFilteredData(matchedRows);
+    }
   }, [searchQuery, data]);
 
   // Conditional rendering
@@ -86,31 +108,30 @@ const ResultsPage = () => {
   if (error) return <div>{error}</div>;
 
   return (
-  <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
-    <h2 className='font-bold'>Available downloads</h2>
+    <div className='h-[90vh] w-full flex items-center justify-center flex-col'>
+      <h2 className='font-bold'>Available downloads</h2>
 
-    {loading && showLoader ? (
-      <div>Loading...</div>
-    ) : filteredData.length > 0 ? (
-      filteredData.map((row: Row, index: number) => {
-        const [col1, col2, col3, col4, col5] = row.c;
-        return (
-          <div key={index} className='p-4 m-2 bg-white text-black rounded shadow'>
-            <p>dept: {col1?.v ?? 'N/A'}</p>
-            <p>semester: {col2?.v ?? 'N/A'}</p>
-            <p>subject: {col3?.v ?? 'N/A'}</p>
-            <p>the resource found</p>
-            <p>link: {col4?.v ?? 'N/A'}</p>
-            <p>title: {col5?.v ?? 'N/A'}</p>
-          </div>
-        );
-      })
-    ) : (
-      <p>No resource found.</p>
-    )}
-  </div>
-);
-;
+      {loading && showLoader ? (
+        <div>Loading...</div>
+      ) : filteredData.length > 0 ? (
+        filteredData.map((row: Row, index: number) => {
+          const [col1, col2, col3, col4, col5] = row.c;
+          return (
+            <div key={index} className='p-4 m-2 bg-white text-black rounded shadow'>
+              <p>dept: {col1?.v ?? 'N/A'}</p>
+              <p>semester: {col2?.v ?? 'N/A'}</p>
+              <p>subject: {col3?.v ?? 'N/A'}</p>
+              <p>the resource found</p>
+              <p>link: {col4?.v ?? 'N/A'}</p>
+              <p>title: {col5?.v ?? 'N/A'}</p>
+            </div>
+          );
+        })
+      ) : (
+        <p>No resource found.</p>
+      )}
+    </div>
+  );
 };
 
 export default ResultsPage;
