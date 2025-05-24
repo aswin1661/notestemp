@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-
+import ListCard from '../components/list';
 type Row = {
   c: Array<{ v: string | number | null } | undefined>;
 };
@@ -115,15 +115,17 @@ const ResultsPage = () => {
         <div>Loading...</div>
       ) : filteredData.length > 0 ? (
         filteredData.map((row: Row, index: number) => {
-          const [col1, col2, col3, col4, col5] = row.c;
+          const [col1, col2, col3, col4, col5,col6] = row.c;
           return (
-            <div key={index} className='p-4 m-2 bg-white text-black rounded shadow'>
-              <p>dept: {col1?.v ?? 'N/A'}</p>
-              <p>semester: {col2?.v ?? 'N/A'}</p>
-              <p>subject: {col3?.v ?? 'N/A'}</p>
-              <p>the resource found</p>
-              <p>link: {col4?.v ?? 'N/A'}</p>
-              <p>title: {col5?.v ?? 'N/A'}</p>
+            <div key={index}>
+              <ListCard
+                     depts={String(col1?.v ?? 'N/A')}
+                     types={String(col6?.v ?? 'N/A')}
+                     semesters={String(col2?.v ?? 'N/A')}
+                     titles={String(col5?.v ?? 'N/A')}
+                     subjects={String(col3?.v ?? 'N/A')}
+                     links={String(col4?.v ?? 'N/A')}
+              />
             </div>
           );
         })
