@@ -1,25 +1,59 @@
-import {Sem} from "@/app/components/details"
-import {Section} from "@/app/components/card"
-export default async function Sub({params}:{
-    params:Promise<{sem:number,dept:string}>
+import { gd, cse, ece, it } from "@/app/components/details";
+import { Section } from "@/app/components/card";
+
+export default async function Sub({
+  params,
+}: {
+  params: Promise<{ sem: number; dept: string }>;
 }) {
-    const sem = (await params).sem
-    const branch =(await params).dept
-    return(
-         <div className="w-full h-auto flex flex-col items-center">
-           <div className="grid align-center justify-center"  >
+  const { sem, dept } = await params;
+  const normalizedDept = dept.toLowerCase();
 
-                 {Sem.filter((S1)=>{
-                     return sem.toString() ===  S1.id.toString()
+  const departmentData = {
+    gd,
+    cse,
+    ece,
+    it,
+  };
 
-                  }).map((S1)=>(
-        <Section key={S1.id} sem={sem} branch={branch} sub1={S1.sub1} sub2={S1.sub2} sub3={S1.sub3} sub4={S1.sub4} sub5={S1.sub5} sub6={S1.sub6} >
-        </Section>
-      ))
-      }
+  const selectedDept = departmentData[normalizedDept as keyof typeof departmentData];
 
-        </div>
-     </div>
-    
-    )
+  if (!selectedDept) {
+    return (
+      <div className="w-full h-auto flex flex-col items-center">
+        <p>Invalid department: {dept}</p>
+      </div>
+    );
+  }
+
+  const semNumber = Number(sem);
+  const filteredSubjects = selectedDept.filter((entry) => entry.id === semNumber);
+
+  if (filteredSubjects.length === 0) {
+    return (
+      <div className="w-full h-auto flex flex-col items-center">
+        <p>No subjects found for semester {sem} in department {dept}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-auto flex flex-col items-center">
+      <div className="grid align-center justify-center">
+        {filteredSubjects.map((subject) => (
+          <Section
+            key={subject.id}
+            sem={semNumber}
+            branch={dept}
+            sub1={subject.sub1}
+            sub2={subject.sub2}
+            sub3={subject.sub3}
+            sub4={subject.sub4}
+            sub5={subject.sub5}
+            sub6={subject.sub6}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
