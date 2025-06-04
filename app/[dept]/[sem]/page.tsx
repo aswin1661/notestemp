@@ -28,11 +28,15 @@ export default async function Sub({ params }: { params: Promise<{ sem: string; d
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br backdrop-blur-md bg-black/40 text-white flex flex-col justify-center items-center p-6"
-    style={{
-        backgroundImage: "url('/ucek.jpg')",
+    <div className="min-h-screen text-white flex flex-col justify-center items-center p-6"
+      style={{
+        backgroundImage: "url('/ucek.jpg')", // or your updated filename
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         filter: "sepia(0.4) saturate(1) contrast(1) brightness(0.9)",
-      }}>
+      }}
+    >
       <h1 className="text-3xl font-bold mb-10 text-center px-6 py-2 rounded-xl shadow-md bg-black/50 backdrop-blur-md border-1 border-gray-700">
         Select the Subject
       </h1>
