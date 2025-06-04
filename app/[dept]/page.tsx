@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import {Semester} from "../components/semester";
-import { SemesterGd } from "../components/semesterGd";
 export async function generateStaticParams(){
     return[
         {dept:'gd'},
@@ -16,14 +15,7 @@ export default async function Dept({params}:{
 }) 
 {
     const title =(await params).dept;
-    if(title === 'gd'){
-        return(
-           <>
-           <SemesterGd link={title} />
-           </>
-             )
-            }
-        if(title === 'cse'|| title=== 'it'||title==='ece'){
+        if(title === 'cse'|| title=== 'it'||title==='ece' || title === 'gd'){
             return(
         <div>
            <Semester link={title} />

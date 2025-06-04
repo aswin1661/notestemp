@@ -1,13 +1,4 @@
 
-type gd = {
-    id: number;
-    sub1:string;
-    sub2:string;
-    sub3:string;
-    sub4:string;
-    sub5:string;
-    sub6:string;
-  };
   type cse = {
     id: number;
     sub1:string;
@@ -36,27 +27,25 @@ type gd = {
     sub6:string;
   };
 
-export const gd: gd[] = [
-    {
-      id: 1,
-      sub1:"maths",
-      sub2:"physics",
-      sub3:"BME",
-      sub4:"BCE",
-      sub5:"Graphics",
-      sub6:"lifeskill",
-    },
-     {
-      id: 2,
-      sub1:"maths",
-      sub2:"Chemistry",
-      sub3:"C language",
-      sub4:"BEE",
-      sub5:"BM",
-      sub6:"Proff",
-    },
-  ];
    export const ece: ece[] = [
+     {
+       id: 1,
+       sub1:"Maths",
+       sub2:"Chemistry",
+       sub3:"C language",
+       sub4:"BEE",
+       sub5:"BM",
+       sub6:"lifeskill",
+      },
+      {
+    id: 2,
+    sub1:"Maths",
+    sub2:"Physics",
+    sub3:"BME",
+    sub4:"BCE",
+    sub5:"Graphics",
+    sub6:"Professional",
+  },
     {
       id: 3,
       sub1:"ece3sub1",
@@ -113,6 +102,24 @@ export const gd: gd[] = [
     },
   ];
   export const it: it[] = [
+        {
+      id: 1,
+      sub1:"maths",
+      sub2:"physics",
+      sub3:"BME",
+      sub4:"BCE",
+      sub5:"Graphics",
+      sub6:"lifeskill",
+    },
+     {
+      id: 2,
+      sub1:"maths",
+      sub2:"Chemistry",
+      sub3:"C language",
+      sub4:"BEE",
+      sub5:"BM",
+      sub6:"Proff",
+    },
     {
       id: 3,
       sub1:"it3sub1",
@@ -169,6 +176,24 @@ export const gd: gd[] = [
     },
   ];
   export const cse: cse[] = [
+        {
+      id: 1,
+      sub1:"Maths",
+      sub2:"Physics",
+      sub3:"BME",
+      sub4:"BCE",
+      sub5:"Graphics",
+      sub6:"lifeskill",
+    },
+     {
+      id: 2,
+      sub1:"Maths",
+      sub2:"Chemistry",
+      sub3:"C language",
+      sub4:"BEE",
+      sub5:"Mechanics",
+      sub6:"Professional",
+    },
     {
       id: 3,
       sub1:"cse3sub1",
