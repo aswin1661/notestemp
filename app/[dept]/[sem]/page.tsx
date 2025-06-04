@@ -30,7 +30,7 @@ export default async function Sub({ params }: { params: Promise<{ sem: string; d
   return (
     <div className="min-h-screen text-white flex flex-col justify-center items-center p-6"
       style={{
-        backgroundImage: "url('/ucek.jpg')", // or your updated filename
+        backgroundImage: "url('/ucek.jpg')",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",
