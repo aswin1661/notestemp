@@ -24,7 +24,6 @@ export default function Home() {
             }}
 
         >
-            {/* Search */}
             <form onSubmit={handleSearch} className="w-full max-w-2xl mb-10">
                 <div className="bg-black/40 p-4 rounded-2xl flex items-center backdrop-blur-md">
                     <input

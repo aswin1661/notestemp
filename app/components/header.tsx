@@ -11,7 +11,6 @@ export default function Header() {
   const handleSelect = (scheme: string) => {
     setSelectedScheme(scheme);
     setIsOpen(false);
-    // Optionally trigger router logic or state update here
   };
 
   return (
@@ -39,7 +38,6 @@ export default function Header() {
           </svg>
         </button>
 
-        {/* Dropdown */}
         {isOpen && (
           <div className="absolute right-0 mt-2 w-28 bg-black/70 text-white rounded-md shadow-lg z-20 border-[1px] border-gray-600">
             {schemes.map((year) => (
