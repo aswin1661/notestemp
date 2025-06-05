@@ -53,7 +53,7 @@ export default function Home() {
                         <Link
                             key={item}
                             href="/notes"
-                            className="bg-black/30 hover:bg-black/60 transition text-white text-lg font-semibold md:px-6 py-3 rounded-xl backdrop-blur-md shadow-md w-full text-center"
+                            className="bg-black/30 hover:bg-black/60 transition text-white text-lg font-semibold md:px-6 py-3 rounded-xl backdrop-blur-md shadow-md w-full flex items-center justify-center"
                         >
                             {item}
                         </Link>

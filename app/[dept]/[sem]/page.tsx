@@ -37,11 +37,11 @@ export default async function Sub({ params }: { params: Promise<{ sem: string; d
         filter: "sepia(0.4) saturate(1) contrast(1) brightness(0.9)",
       }}
     >
-      <h1 className="text-3xl font-bold mb-10 text-center px-6 py-2 rounded-xl shadow-md bg-black/50 backdrop-blur-md border-1 border-gray-700">
+      <h1 className="text-3xl font-bold mb-8 text-center -mt-3 sm:mt-3 sm:mb-10 px-6 py-2 rounded-xl shadow-md bg-black/50 backdrop-blur-md border-1 border-gray-700">
         Select the Subject
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 w-full max-w-4xl">
         {subjects.map((sub, index) => (
           <Link
             key={index}
